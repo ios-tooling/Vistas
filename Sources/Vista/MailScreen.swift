@@ -29,18 +29,21 @@ public struct MailScreen: UIViewControllerRepresentable {
 	let bccRecipients: [String]?
 	let content: String?
 	let isHTML: Bool
+	let didFinish: ((Bool) -> Void)?
 	
-	public init(toRecipients: [String]?, subject: String?, bccRecipients: [String]? = nil, content: String? = nil, isHTML: Bool = false, attachments: [MailAttachment] = []) {
+	public init(toRecipients: [String]?, subject: String?, bccRecipients: [String]? = nil, content: String? = nil, isHTML: Bool = false, attachments: [MailAttachment] = [], didFinish: ((Bool) -> Void)? = nil) {
 		self.bccRecipients = bccRecipients
 		self.subject = subject
 		self.toRecipients = toRecipients
 		self.content = content
 		self.isHTML = isHTML
 		self.attachments = attachments
+		self.didFinish = didFinish
 	}
 	
 	public func updateUIViewController(_ uiViewController: MFMailComposeViewController, context: Context) {
 		if let subject { context.coordinator.controller.setSubject(subject) }
+		context.coordinator.didFinish = didFinish
 		context.coordinator.controller.setToRecipients(toRecipients)
 		context.coordinator.controller.setBccRecipients(bccRecipients)
 		if let content { context.coordinator.controller.setMessageBody(content, isHTML: isHTML)}
@@ -59,6 +62,7 @@ public struct MailScreen: UIViewControllerRepresentable {
 	
 	public class Coordinator: NSObject, UINavigationControllerDelegate, MFMailComposeViewControllerDelegate {
 		let controller = MFMailComposeViewController()
+		var didFinish: ((Bool) -> Void)?
 		var addedAttachments: [Int] = []
 		
 		func addAttachments(_ attachments: [MailAttachment]) {
@@ -80,6 +84,7 @@ public struct MailScreen: UIViewControllerRepresentable {
 		public func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
 			controller.dismiss(animated: true, completion: nil)
 			controller.mailComposeDelegate = nil
+			didFinish?(result == .sent)
 		}
 	}
 }
