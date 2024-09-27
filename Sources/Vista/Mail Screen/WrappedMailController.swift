@@ -1,5 +1,5 @@
 //
-//  MailScreen.swift
+//  WrappedMailController.swift
 //  Vistas
 //
 //  Created by Ben Gottlieb on 7/21/24.
@@ -10,20 +10,8 @@
 import SwiftUI
 import MessageUI
 
-public struct MailScreen: UIViewControllerRepresentable {
-	public struct MailAttachment: Equatable, Hashable {
-		public let data: Data
-		public let mimeType: String
-		public let filename: String
-		
-		public init(data: Data, mimeType: String = "public.data", filename: String) {
-			self.data = data
-			self.mimeType = mimeType
-			self.filename = filename
-		}
-	}
-
-	let attachments: [MailAttachment]
+public struct WrappedMailController: UIViewControllerRepresentable {
+	let attachments: [MailScreen.MailAttachment]
 	let toRecipients: [String]?
 	let subject: String?
 	let bccRecipients: [String]?
@@ -31,7 +19,7 @@ public struct MailScreen: UIViewControllerRepresentable {
 	let isHTML: Bool
 	let didFinish: ((Bool) -> Void)?
 	
-	public init(toRecipients: [String]?, subject: String?, bccRecipients: [String]? = nil, content: String? = nil, isHTML: Bool = false, attachments: [MailAttachment] = [], didFinish: ((Bool) -> Void)? = nil) {
+	public init(toRecipients: [String]?, subject: String?, bccRecipients: [String]? = nil, content: String? = nil, isHTML: Bool = false, attachments: [MailScreen.MailAttachment] = [], didFinish: ((Bool) -> Void)? = nil) {
 		self.bccRecipients = bccRecipients
 		self.subject = subject
 		self.toRecipients = toRecipients
@@ -65,7 +53,7 @@ public struct MailScreen: UIViewControllerRepresentable {
 		var didFinish: ((Bool) -> Void)?
 		var addedAttachments: [Int] = []
 		
-		func addAttachments(_ attachments: [MailAttachment]) {
+		func addAttachments(_ attachments: [MailScreen.MailAttachment]) {
 			for attachment in attachments {
 				let hash = attachment.hashValue
 				if !addedAttachments.contains(hash) {
