@@ -8,6 +8,7 @@
 import SwiftUI
 import Suite
 
+#if os(iOS)
 public struct TakePictureScreen: UIViewControllerRepresentable {
 	@Environment(\.dismiss) var dismiss
 	@Binding var image: UIImage?
@@ -61,3 +62,4 @@ public struct TakePictureScreen: UIViewControllerRepresentable {
 		}
 	}
 }
+#endif

@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+
+#if os(iOS)
 import MessageUI
 
 public struct MailScreen: View {
@@ -80,3 +82,4 @@ extension MailScreen {
 		}
 	}
 }
+#endif
