@@ -7,7 +7,7 @@ import CompilerPluginSupport
 let package = Package(
     name: "Vistas",
      platforms: [
-              .macOS(.v12),
+              .macOS(.v14),
               .iOS(.v16),
               .watchOS(.v10),
          ],
@@ -19,7 +19,7 @@ let package = Package(
     ],
 	 dependencies: [
 		.package(url: "https://github.com/ios-tooling/Suite", from: "1.0.137"),
-		.package(url: "https://github.com/ios-tooling/CrossPlatformKit", from: "1.0.11"),
+		.package(url: "https://github.com/ios-tooling/CrossPlatformKit", from: "1.0.14"),
 	 ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
