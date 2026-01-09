@@ -35,7 +35,6 @@ public struct WrappedMailController: UIViewControllerRepresentable {
 		context.coordinator.controller.setToRecipients(toRecipients)
 		context.coordinator.controller.setBccRecipients(bccRecipients)
 		if let content { context.coordinator.controller.setMessageBody(content, isHTML: isHTML)}
-		if let subject { context.coordinator.controller.setSubject(subject) }
 		context.coordinator.addAttachments(attachments)
 	}
 	
@@ -51,14 +50,13 @@ public struct WrappedMailController: UIViewControllerRepresentable {
 	public class Coordinator: NSObject, UINavigationControllerDelegate, MFMailComposeViewControllerDelegate {
 		let controller = MFMailComposeViewController()
 		var didFinish: ((Bool) -> Void)?
-		var addedAttachments: [Int] = []
-		
+		var addedAttachments: [MailScreen.MailAttachment] = []
+
 		func addAttachments(_ attachments: [MailScreen.MailAttachment]) {
 			for attachment in attachments {
-				let hash = attachment.hashValue
-				if !addedAttachments.contains(hash) {
+				if !addedAttachments.contains(attachment) {
 					controller.addAttachmentData(attachment.data, mimeType: attachment.mimeType, fileName: attachment.filename)
-					addedAttachments.append(hash)
+					addedAttachments.append(attachment)
 				}
 			}
 		}
