@@ -17,9 +17,9 @@ public struct WrappedMailController: UIViewControllerRepresentable {
 	let bccRecipients: [String]?
 	let content: String?
 	let isHTML: Bool
-	let didFinish: ((Bool) -> Void)?
-	
-	public init(toRecipients: [String]?, subject: String?, bccRecipients: [String]? = nil, content: String? = nil, isHTML: Bool = false, attachments: [MailScreen.MailAttachment] = [], didFinish: ((Bool) -> Void)? = nil) {
+	let didFinish: (@MainActor (Bool) -> Void)?
+
+	public init(toRecipients: [String]?, subject: String?, bccRecipients: [String]? = nil, content: String? = nil, isHTML: Bool = false, attachments: [MailScreen.MailAttachment] = [], didFinish: (@MainActor (Bool) -> Void)? = nil) {
 		self.bccRecipients = bccRecipients
 		self.subject = subject
 		self.toRecipients = toRecipients
@@ -49,7 +49,7 @@ public struct WrappedMailController: UIViewControllerRepresentable {
 	
 	public class Coordinator: NSObject, UINavigationControllerDelegate, MFMailComposeViewControllerDelegate {
 		let controller = MFMailComposeViewController()
-		var didFinish: ((Bool) -> Void)?
+		var didFinish: (@MainActor (Bool) -> Void)?
 		var addedAttachments: [MailScreen.MailAttachment] = []
 
 		func addAttachments(_ attachments: [MailScreen.MailAttachment]) {
@@ -70,7 +70,11 @@ public struct WrappedMailController: UIViewControllerRepresentable {
 		public func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
 			controller.dismiss(animated: true, completion: nil)
 			controller.mailComposeDelegate = nil
-			didFinish?(result == .sent)
+			if let didFinish {
+				Task { @MainActor in
+					didFinish(result == .sent)
+				}
+			}
 		}
 	}
 }

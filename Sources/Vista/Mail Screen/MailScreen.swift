@@ -12,16 +12,16 @@ import MessageUI
 
 public struct MailScreen: View {
 	@Environment(\.dismiss) private var dismiss
-	
+
 	let attachments: [MailScreen.MailAttachment]
 	let toRecipients: [String]?
 	let subject: String?
 	let bccRecipients: [String]?
 	let content: String?
 	let isHTML: Bool
-	let didFinish: ((Bool) -> Void)?
-	
-	public init(toRecipients: [String]?, subject: String?, bccRecipients: [String]? = nil, content: String? = nil, isHTML: Bool = false, attachments: [MailScreen.MailAttachment] = [], didFinish: ((Bool) -> Void)? = nil) {
+	let didFinish: (@MainActor (Bool) -> Void)?
+
+	public init(toRecipients: [String]?, subject: String?, bccRecipients: [String]? = nil, content: String? = nil, isHTML: Bool = false, attachments: [MailScreen.MailAttachment] = [], didFinish: (@MainActor (Bool) -> Void)? = nil) {
 		self.bccRecipients = bccRecipients
 		self.subject = subject
 		self.toRecipients = toRecipients

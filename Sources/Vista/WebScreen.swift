@@ -13,10 +13,10 @@ public struct WebScreen: UXViewRepresentable {
 	let url: URL?
 	let request: URLRequest?
 	let html: String?
-	var didFinishLoading: ((WKWebView, Error?) -> Void)?
+	var didFinishLoading: (@MainActor (WKWebView, Error?) -> Void)?
 	var isLoading: Binding<Bool>?
-	
-	public init(url: URL, isLoading: Binding<Bool>? = nil, didFinishLoading: ((WKWebView, Error?) -> Void)? = nil) {
+
+	public init(url: URL, isLoading: Binding<Bool>? = nil, didFinishLoading: (@MainActor (WKWebView, Error?) -> Void)? = nil) {
 		self.url = url
 		self.html = nil
 		self.request = nil
@@ -24,15 +24,15 @@ public struct WebScreen: UXViewRepresentable {
 		self.isLoading = isLoading
 	}
 	
-	public init(request: URLRequest, isLoading: Binding<Bool>? = nil, didFinishLoading: ((WKWebView, Error?) -> Void)? = nil) {
+	public init(request: URLRequest, isLoading: Binding<Bool>? = nil, didFinishLoading: (@MainActor (WKWebView, Error?) -> Void)? = nil) {
 		self.url = nil
 		self.html = nil
 		self.request = request
 		self.didFinishLoading = didFinishLoading
 		self.isLoading = isLoading
 	}
-	
-	public init(html: String, isLoading: Binding<Bool>? = nil, didFinishLoading: ((WKWebView, Error?) -> Void)? = nil) {
+
+	public init(html: String, isLoading: Binding<Bool>? = nil, didFinishLoading: (@MainActor (WKWebView, Error?) -> Void)? = nil) {
 		self.html = html
 		self.url = nil
 		self.request = nil
@@ -74,7 +74,7 @@ public struct WebScreen: UXViewRepresentable {
 		var request: URLRequest? { didSet { updateWebView() }}
 		var html: String?
 		var webView: InternalWebView!
-		var didFinishLoading: ((WKWebView, Error?) -> Void)?
+		var didFinishLoading: (@MainActor (WKWebView, Error?) -> Void)?
 		var isLoadingObserver: Any?
 		let isLoading: Binding<Bool>?
 		
@@ -103,11 +103,19 @@ public struct WebScreen: UXViewRepresentable {
 		}
 				
 		public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-			didFinishLoading?(webView, nil)
+			if let didFinishLoading {
+				Task { @MainActor in
+					didFinishLoading(webView, nil)
+				}
+			}
 		}
-		
+
 		public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error) {
-			didFinishLoading?(webView, error)
+			if let didFinishLoading {
+				Task { @MainActor in
+					didFinishLoading(webView, error)
+				}
+			}
 		}
 		
 		func updateWebView() {
