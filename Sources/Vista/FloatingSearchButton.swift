@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-@available(iOS 17.0, *)
+@available(iOS 17.0, macOS 15, *)
 public extension View {
 	@ViewBuilder func addFloatingSearchButton<Content: View>(_ label: String = "Search", searchText: Binding<String>, content: @escaping @MainActor () -> Content) -> some View {
 		
-		if #available(iOS 26.0, *) {
+		if #available(iOS 26.0, macOS 26, *) {
 			self
 				.safeAreaBar(edge: .bottom, alignment: .center, content: {
 					FloatingSearchButton(label, searchText: searchText, content: content)
@@ -25,7 +25,7 @@ public extension View {
 	}
 }
 
-@available(iOS 17.0, *)
+@available(iOS 17.0, macOS 15, *)
 public struct FloatingSearchButton<Content: View>: View {
 	@Binding var searchText: String
 	let searchLabel: String
@@ -43,7 +43,7 @@ public struct FloatingSearchButton<Content: View>: View {
 	}
 	
 	public var body: some View {
-		if #available(iOS 26.0, *) {
+		if #available(iOS 26.0, macOS 26, *) {
 			GlassEffectContainer(spacing: 40.0) {
 				HStack {
 					if isActive {
@@ -127,7 +127,7 @@ public struct FloatingSearchButton<Content: View>: View {
 }
 
 #Preview {
-	if #available(iOS 26, *) {
+	if #available(iOS 26, macOS 15, *) {
 		FloatingSearchButton("Search Me", searchText: .constant("")) { Text("Label here") }
 	}
 }
