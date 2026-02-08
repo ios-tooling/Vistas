@@ -1,5 +1,5 @@
 //
-//  CameraView.swift
+//  StockCameraScreen.swift
 //  Vistas
 //
 //  Created by Ben Gottlieb on 9/22/25.
@@ -11,14 +11,22 @@ import SwiftUI
 import AVFoundation
 import CrossPlatformKit
 
-public struct CameraScreen: View {
+public struct StockCameraScreen: View {
 	@Binding var isPresented: Bool
+	let useIsPresentedBinding: Bool
 	let onImageCaptured: @MainActor (UXImage) -> Void
 	@State private var permissionStatus: AVAuthorizationStatus = .notDetermined
 	@Environment(\.dismiss) private var dismiss
 
+	public init(onImageCaptured: @escaping @MainActor (UXImage) -> Void) {
+		_isPresented = .constant(true)
+		useIsPresentedBinding = false
+		self.onImageCaptured = onImageCaptured
+	}
+	
 	public init(isPresented: Binding<Bool>, onImageCaptured: @escaping @MainActor (UXImage) -> Void) {
 		_isPresented = isPresented
+		useIsPresentedBinding = true
 		self.onImageCaptured = onImageCaptured
 	}
 
@@ -26,8 +34,15 @@ public struct CameraScreen: View {
 		Group {
 			switch permissionStatus {
 			case .authorized:
-				CameraView(isPresented: $isPresented, onImageCaptured: onImageCaptured)
-					.edgesIgnoringSafeArea(.all)
+				StockCameraView(onImageCaptured: onImageCaptured) {
+					if useIsPresentedBinding {
+						isPresented = false
+					} else {
+						dismiss()
+					}
+				}
+				.edgesIgnoringSafeArea(.all)
+		
 			case .denied, .restricted:
 				permissionDeniedView
 			case .notDetermined:
@@ -38,6 +53,10 @@ public struct CameraScreen: View {
 		}
 		.onAppear {
 			checkCameraPermission()
+		}
+		.background {
+			Color.black
+				.ignoresSafeArea()
 		}
 	}
 
@@ -87,58 +106,6 @@ public struct CameraScreen: View {
 				Task { @MainActor in
 					permissionStatus = granted ? .authorized : .denied
 				}
-			}
-		}
-	}
-}
-
-public struct CameraView: UIViewControllerRepresentable {
-	@Binding var isPresented: Bool
-	let onImageCaptured: @MainActor (UXImage) -> Void
-
-	public init(isPresented: Binding<Bool>, onImageCaptured: @escaping @MainActor (UXImage) -> Void) {
-		_isPresented = isPresented
-		self.onImageCaptured = onImageCaptured
-	}
-	
-	public func makeUIViewController(context: Context) -> UIImagePickerController {
-		let picker = UIImagePickerController()
-		picker.delegate = context.coordinator
-		picker.sourceType = .camera
-		picker.allowsEditing = true
-		return picker
-	}
-	
-	public func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
-	
-	public func makeCoordinator() -> Coordinator {
-		Coordinator(self)
-	}
-	
-	public class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-		let parent: CameraView
-		
-		init(_ parent: CameraView) {
-			self.parent = parent
-		}
-		
-		public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-			// Use edited image if available (since allowsEditing = true), otherwise fall back to original
-			if let image = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
-				Task { @MainActor in
-					parent.onImageCaptured(image)
-					parent.isPresented = false
-				}
-			} else {
-				Task { @MainActor in
-					parent.isPresented = false
-				}
-			}
-		}
-		
-		public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-			Task { @MainActor in
-				parent.isPresented = false
 			}
 		}
 	}

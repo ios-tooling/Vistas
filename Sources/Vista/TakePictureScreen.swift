@@ -26,7 +26,11 @@ public struct TakePictureScreen: View {
 		Group {
 			switch permissionStatus {
 			case .authorized:
-				WrappedTakePictureController(image: $image, fromLibrary: fromLibrary, dismiss: dismiss)
+				if fromLibrary {
+					SelectFromLibraryScreen(image: $image, dismiss: dismiss)
+				} else {
+					StockCameraScreen { image = $0 }
+				}
 			case .denied, .restricted:
 				permissionDeniedView
 			case .notDetermined:
@@ -131,9 +135,8 @@ public struct TakePictureScreen: View {
 	}
 }
 
-struct WrappedTakePictureController: UIViewControllerRepresentable {
+struct SelectFromLibraryScreen: UIViewControllerRepresentable {
 	@Binding var image: UIImage?
-	let fromLibrary: Bool
 	let dismiss: DismissAction
 
 	func makeUIViewController(context: Context) -> some UIViewController {
@@ -144,28 +147,23 @@ struct WrappedTakePictureController: UIViewControllerRepresentable {
 
 	func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
 		context.coordinator.dismiss = { dismiss() }
-		context.coordinator.fromLibrary = fromLibrary
 		context.coordinator.imageBinding = $image
 	}
 
 	func makeCoordinator() -> Coordinator {
-		Coordinator(fromLibrary: fromLibrary)
+		Coordinator()
 	}
 	
 	class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 		let controller = UIImagePickerController()
 		var dismiss = { }
 		var imageBinding: Binding<UIImage?>?
-		var fromLibrary = false { didSet {
-			controller.sourceType = fromLibrary ? .photoLibrary : .camera
-		}}
 
-		init(fromLibrary: Bool) {
+		override init() {
 			super.init()
 
-			self.fromLibrary = fromLibrary
 			controller.delegate = self
-			controller.sourceType = fromLibrary ? .photoLibrary : .camera
+			controller.sourceType = .photoLibrary
 		}
 		
 		public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
