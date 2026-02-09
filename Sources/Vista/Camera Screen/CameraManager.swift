@@ -11,23 +11,25 @@ import AVFoundation
 import CrossPlatformKit
 
 @available(iOS 17, *)
-@MainActor @Observable public class CameraManager {
+@MainActor @Observable final public class CameraManager: CameraManaging {
 	public static let instance = CameraManager()
 
-	var isRunning = false
-	var cameraPosition: AVCaptureDevice.Position = .back
-	var permissionStatus: AVAuthorizationStatus = .notDetermined
-	var capturedImage: UXImage?
-	var savedImages: [UXImage] = []
-	var isSavingImage = false
+	public var isRunning = false
+	public var cameraPosition: AVCaptureDevice.Position = .back
+	public var permissionStatus: AVAuthorizationStatus = .notDetermined
+	public var capturedImage: UXImage?
+	public var savedImages: [UXImage] = []
+	public var isSavingImage = false
 	
-	nonisolated(unsafe) let session = AVCaptureSession()
+	public nonisolated(unsafe) let session = AVCaptureSession()
 	@ObservationIgnored nonisolated(unsafe) var videoDeviceInput: AVCaptureDeviceInput?
 	@ObservationIgnored nonisolated(unsafe) var photoOutput = AVCapturePhotoOutput()
 	nonisolated let sessionQueue = DispatchQueue(label: "camera.session.queue")
 	@ObservationIgnored var captureProcessor: PhotoCaptureProcessor?
 
-	public init() { }
+	public init() {
+		
+	}
 
 	public func checkPermissions() {
 		permissionStatus = AVCaptureDevice.authorizationStatus(for: .video)
@@ -44,7 +46,7 @@ import CrossPlatformKit
 		}
 	}
 	
-	func reset() {
+	public func reset() {
 		capturedImage = nil
 		savedImages = []
 	}

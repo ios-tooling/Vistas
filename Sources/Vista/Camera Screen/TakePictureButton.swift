@@ -12,7 +12,7 @@ import CrossPlatformKit
 
 @available(iOS 17, *)
 struct TakePictureButton: View {
-	var manager: CameraManager
+	var manager: any CameraManaging
 	var body: some View {
 		Button(action: {
 			manager.capturePhoto()
@@ -34,7 +34,7 @@ struct TakePictureButton: View {
 		ZStack {
 			Color.red
 				.ignoresSafeArea()
-			TakePictureButton(manager: .instance)
+			TakePictureButton(manager: CameraManager.instance)
 		}
 	}
 }

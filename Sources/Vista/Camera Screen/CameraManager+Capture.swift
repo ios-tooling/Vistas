@@ -20,6 +20,13 @@ extension CameraManager {
 			self?.photoOutput.capturePhoto(with: settings, delegate: processor)
 		}
 	}
+	
+	public func saveImage(_ image: UXImage? = nil) {
+		guard let saved = image ?? capturedImage else { return }
+		savedImages.append(saved)
+		capturedImage = nil
+		isSavingImage = false
+	}
 }
 
 @available(iOS 17, *)

@@ -11,7 +11,7 @@ import CrossPlatformKit
 
 @available(iOS 17, *)
 struct ThumbnailImages: View {
-	var manager: CameraManager
+	var manager: any CameraManaging
 	var animationNamespace: Namespace.ID
 	let imageSize: Double = 50
 	let badgeColor = Color.yellow
@@ -20,7 +20,7 @@ struct ThumbnailImages: View {
 
 	var body: some View {
 		ZStack {
-			ForEach(manager.savedImages.enumerated(), id: \.offset) { offset, image in
+			ForEach(Array(manager.savedImages.enumerated()), id: \.offset) { offset, image in
 				Image(uiImage: image)
 					.resizable()
 					.frame(width: imageSize, height: imageSize)

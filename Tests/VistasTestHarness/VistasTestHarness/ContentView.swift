@@ -5,17 +5,20 @@
 //  Created by Ben Gottlieb on 2/8/26.
 //
 
-import SwiftUI
+import Suite
 import Vistas
 
 struct ContentView: View {
 	@State private var selectedImage: UIImage?
+	@State private var showingCamera = false
+	
+	var cameraManager: CameraManaging { Gestalt.isOnSimulator ? MockCameraManager.instance : CameraManager.instance }
 	
 	var body: some View {
 		NavigationStack {
 			List {
 				NavigationLink {
-					CameraScreen { image in print(image) }
+					CameraScreen(manager: cameraManager) { image in print(image) }
 				} label: {
 					Text("Custom Camera Screen")
 				}
@@ -42,6 +45,19 @@ struct ContentView: View {
 			.onChange(of: selectedImage) {
 				print(String(describing: selectedImage))
 			}
+		}
+		.sheet(isPresented: $showingCamera) {
+			CameraScreen(manager: cameraManager) { image in print(image) }
+		}
+		.onAppear {
+			if Gestalt.isOnSimulator {
+				MockCameraManager.instance.sampleImages = ["sample_1", "sample_2", "sample_3"].compactMap { UIImage(named: $0) }
+				
+				MockCameraManager.instance.saveImage(MockCameraManager.instance.sampleImages[0])
+				MockCameraManager.instance.saveImage(MockCameraManager.instance.sampleImages[1])
+				MockCameraManager.instance.saveImage(MockCameraManager.instance.sampleImages[2])
+			}
+			showingCamera = true
 		}
 	}
 }

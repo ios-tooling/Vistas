@@ -11,7 +11,7 @@ import CrossPlatformKit
 
 @available(iOS 17, *)
 struct CropView: View {
-	let manager: CameraManager
+	let manager: any CameraManaging
 	let image: UXImage?
 	var animationNamespace: Namespace.ID
 
@@ -53,9 +53,7 @@ struct CropView: View {
 		withAnimation(.easeInOut(duration: 0.4)) {
 			manager.isSavingImage = true
 		} completion: {
-			manager.savedImages.append(image)
-			manager.capturedImage = nil
-			manager.isSavingImage = false
+			manager.saveImage(nil)
 		}
 	}
 }

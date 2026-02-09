@@ -12,10 +12,10 @@ import CrossPlatformKit
 
 @available(iOS 17, *)
 public struct CameraView: View {
-	@State var manager: CameraManager
+	@State var manager: any CameraManaging
 	let onImagesCaptured: (@MainActor ([UXImage]) -> Void)?
 
-	public init(manager: CameraManager = .instance, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
+	public init(manager: any CameraManaging = CameraManager.instance, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
 		_manager = State(initialValue: manager)
 		self.onImagesCaptured = onImagesCaptured
 	}
