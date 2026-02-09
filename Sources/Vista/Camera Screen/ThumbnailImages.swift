@@ -7,15 +7,16 @@
 
 #if os(iOS)
 import SwiftUI
-import AVFoundation
 import CrossPlatformKit
 
 @available(iOS 17, *)
 struct ThumbnailImages: View {
 	var manager: CameraManager
+	var animationNamespace: Namespace.ID
 	let imageSize: Double = 50
 	let badgeColor = Color.yellow
 	let badgeTextColor = Color.white
+	@State private var bounceScale = 1.0
 
 	var body: some View {
 		ZStack {
@@ -27,9 +28,31 @@ struct ThumbnailImages: View {
 					.aspectRatio(contentMode: .fit)
 					.border(.black, width: 0.5)
 			}
+
+			if manager.isSavingImage, let image = manager.capturedImage {
+				Image(uxImage: image)
+					.resizable()
+					.aspectRatio(contentMode: .fill)
+					.frame(width: imageSize, height: imageSize)
+					.clipped()
+					.border(.black, width: 0.5)
+					.matchedGeometryEffect(id: "keepImage", in: animationNamespace, isSource: false)
+					.offset(x: Double(manager.savedImages.count * 2), y: Double(manager.savedImages.count * 2))
+			}
+		}
+		.scaleEffect(bounceScale)
+		.onChange(of: manager.savedImages.count) { old, new in
+			guard new > old else { return }
+			withAnimation(.spring(duration: 0.2, bounce: 0.5)) {
+				bounceScale = 1.15
+			} completion: {
+				withAnimation(.spring(duration: 0.35, bounce: 0.6)) {
+					bounceScale = 1.0
+				}
+			}
 		}
 		.overlay(alignment: .topTrailing) {
-			if manager.savedImages.count > 0 {
+			if manager.savedImages.count > 1 {
 				Text(manager.savedImages.count.formatted())
 					.padding(6)
 					.font(.caption.bold())
@@ -45,5 +68,3 @@ struct ThumbnailImages: View {
 }
 
 #endif
-
-

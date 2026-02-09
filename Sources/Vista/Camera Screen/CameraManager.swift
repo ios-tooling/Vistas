@@ -19,6 +19,7 @@ import CrossPlatformKit
 	var permissionStatus: AVAuthorizationStatus = .notDetermined
 	var capturedImage: UXImage?
 	var savedImages: [UXImage] = []
+	var isSavingImage = false
 	
 	nonisolated(unsafe) let session = AVCaptureSession()
 	@ObservationIgnored nonisolated(unsafe) var videoDeviceInput: AVCaptureDeviceInput?

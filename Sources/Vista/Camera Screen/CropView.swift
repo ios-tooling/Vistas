@@ -1,28 +1,27 @@
 //
-//  File.swift
+//  CropView.swift
 //  Vistas
 //
 //  Created by Ben Gottlieb on 2/8/26.
 //
 
-import Foundation
-
 #if os(iOS)
 import SwiftUI
-import AVFoundation
 import CrossPlatformKit
 
 @available(iOS 17, *)
-public struct CropView: View {
+struct CropView: View {
 	let manager: CameraManager
 	let image: UXImage?
-	
-	public var body: some View {
+	var animationNamespace: Namespace.ID
+
+	var body: some View {
 		ZStack {
-			if let image {
+			if let image, !manager.isSavingImage {
 				Image(uxImage: image)
 					.resizable()
 					.aspectRatio(contentMode: .fit)
+					.matchedGeometryEffect(id: "keepImage", in: animationNamespace, isSource: true)
 					.frame(maxHeight: .infinity, alignment: .center)
 			}
 
@@ -32,22 +31,32 @@ public struct CropView: View {
 				}
 				Spacer()
 				Button("Keep") {
-					if let image {
-						manager.savedImages.append(image)
-						withAnimation { manager.capturedImage = nil }
-					}
+					keepImage()
 				}
 			}
 			.buttonStyle(.bordered)
 			.padding()
 			.tint(.primary)
 			.frame(maxHeight: .infinity, alignment: .top)
+			.opacity(manager.isSavingImage ? 0 : 1)
 		}
 		.background {
 			Color.systemBackground
 				.ignoresSafeArea()
+				.opacity(manager.isSavingImage ? 0 : 1)
 		}
 		.opacity(image == nil ? 0 : 1)
+	}
+
+	private func keepImage() {
+		guard let image else { return }
+		withAnimation(.easeInOut(duration: 0.4)) {
+			manager.isSavingImage = true
+		} completion: {
+			manager.savedImages.append(image)
+			manager.capturedImage = nil
+			manager.isSavingImage = false
+		}
 	}
 }
 
