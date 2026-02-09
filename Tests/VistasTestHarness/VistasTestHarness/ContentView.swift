@@ -15,6 +15,12 @@ struct ContentView: View {
 		NavigationStack {
 			List {
 				NavigationLink {
+					CameraScreen { image in print(image) }
+				} label: {
+					Text("Custom Camera Screen")
+				}
+				
+				NavigationLink {
 					StockCameraScreen { image in print(image) }
 				} label: {
 					Text("Stock Camera Screen")
