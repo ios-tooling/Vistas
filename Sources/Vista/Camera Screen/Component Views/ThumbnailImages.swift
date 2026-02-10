@@ -21,7 +21,11 @@ struct ThumbnailImages: View {
 	@State private var bounceScale = 1.0
 
 	var body: some View {
-		Button(action: { isReviewingPhotos.toggle() }) {
+		Button(action: {
+			withAnimation {
+				isReviewingPhotos.toggle()
+			}
+		}) {
 			ZStack {
 				ForEach(Array(manager.savedImages.enumerated()), id: \.offset) { offset, image in
 					Image(uiImage: image.image)

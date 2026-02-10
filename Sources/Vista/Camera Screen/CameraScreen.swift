@@ -41,7 +41,9 @@ public struct CameraScreen: View {
 			.frame(maxHeight: .infinity, alignment: .bottom)
 
 			CropView(manager: manager, image: manager.capturedImage, animationNamespace: animationNamespace)
-			ReviewPhotosView(manager: manager, isVisible: $isReviewingPhotos)
+			if isReviewingPhotos {
+				ReviewPhotosView(manager: manager, isVisible: $isReviewingPhotos)
+			}
 		}
 		.toolbar(manager.capturedImage == nil ? .visible : .hidden)
 		.onDisappear {

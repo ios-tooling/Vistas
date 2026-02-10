@@ -45,9 +45,9 @@ struct ReviewPhotosView: View {
 				Color.primary.opacity(0.1)
 			}
 			.ignoresSafeArea()
-			.opacity(manager.isSavingImage ? 0 : 1)
 		}
-		.opacity(isVisible ? 1 : 0)
+		.zIndex(10)
+	//	.opacity(isVisible ? 1 : 0)
 	}
 	
 }
