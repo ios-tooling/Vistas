@@ -19,7 +19,7 @@ public final class MockCameraManager: CameraManaging {
 	public var cameraPosition: AVCaptureDevice.Position = .back
 	public var permissionStatus: AVAuthorizationStatus = .authorized
 	public var capturedImage: UXImage?
-	public var savedImages: [UXImage] = []
+	public var savedImages: [CapturedImage] = []
 	public var isSavingImage = false
 	public let session = AVCaptureSession()
 
@@ -75,7 +75,7 @@ public final class MockCameraManager: CameraManaging {
 	
 	public func saveImage(_ image: UXImage? = nil) {
 		guard let saved = image ?? capturedImage else { return }
-		savedImages.append(saved)
+		savedImages.append(.init(saved))
 		capturedImage = nil
 		isSavingImage = false
 	}

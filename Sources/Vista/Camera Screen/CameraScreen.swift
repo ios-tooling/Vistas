@@ -13,6 +13,7 @@ import CrossPlatformKit
 @available(iOS 17, *)
 public struct CameraScreen: View {
 	@State var manager: any CameraManaging
+	@State var isReviewingPhotos = false
 	@Namespace private var animationNamespace
 	let onImagesCaptured: (@MainActor ([UXImage]) -> Void)?
 
@@ -26,7 +27,7 @@ public struct CameraScreen: View {
 			CameraView(manager: manager, onImagesCaptured: onImagesCaptured)
 
 			HStack {
-				let thumbnails = ThumbnailImages(manager: manager, animationNamespace: animationNamespace)
+				let thumbnails = ThumbnailImages(manager: manager, isReviewingPhotos: $isReviewingPhotos, animationNamespace: animationNamespace)
 
 				Spacer()
 				thumbnails
@@ -40,6 +41,7 @@ public struct CameraScreen: View {
 			.frame(maxHeight: .infinity, alignment: .bottom)
 
 			CropView(manager: manager, image: manager.capturedImage, animationNamespace: animationNamespace)
+			ReviewPhotosView(manager: manager, isVisible: $isReviewingPhotos)
 		}
 		.toolbar(manager.capturedImage == nil ? .visible : .hidden)
 		.onDisappear {

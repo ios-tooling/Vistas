@@ -11,14 +11,13 @@ import CrossPlatformKit
 import Observation
 
 @available(iOS 17, *)
-@MainActor
-public protocol CameraManaging: AnyObject, Observable {
+@MainActor public protocol CameraManaging: AnyObject, Observable {
 	static var instance: Self { get }
 	var isRunning: Bool { get set }
 	var cameraPosition: AVCaptureDevice.Position { get set }
 	var permissionStatus: AVAuthorizationStatus { get set }
 	var capturedImage: UXImage? { get set }
-	var savedImages: [UXImage] { get set }
+	var savedImages: [CapturedImage] { get set }
 	var isSavingImage: Bool { get set }
 	var session: AVCaptureSession { get }
 	

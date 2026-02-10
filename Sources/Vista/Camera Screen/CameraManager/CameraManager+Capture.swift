@@ -23,7 +23,7 @@ extension CameraManager {
 	
 	public func saveImage(_ image: UXImage? = nil) {
 		guard let saved = image ?? capturedImage else { return }
-		savedImages.append(saved)
+		savedImages.append(.init(saved))
 		capturedImage = nil
 		isSavingImage = false
 	}
