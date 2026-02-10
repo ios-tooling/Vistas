@@ -16,7 +16,6 @@ struct ThumbnailImages: View {
 
 	var animationNamespace: Namespace.ID
 	let imageSize: Double = 50
-	let badgeColor = Color.yellow
 	let badgeTextColor = Color.white
 	@State private var bounceScale = 1.0
 
@@ -66,7 +65,7 @@ struct ThumbnailImages: View {
 						.foregroundStyle(badgeTextColor)
 						.background {
 							Circle()
-								.fill(badgeColor)
+								.fill(.tint)
 						}
 						.offset(x: 12, y: -12)
 				}

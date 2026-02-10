@@ -46,7 +46,7 @@ struct ContentView: View {
 				print(String(describing: selectedImage))
 			}
 		}
-		.sheet(isPresented: $showingCamera) {
+		.fullScreenCover(isPresented: $showingCamera) {
 			CameraScreen(manager: cameraManager) { image in print(image) }
 		}
 		.onAppear {

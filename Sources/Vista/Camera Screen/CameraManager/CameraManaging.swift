@@ -30,4 +30,17 @@ import Observation
 	func saveImage(_ image: UXImage?)
 }
 
+@available(iOS 17, *)
+public extension CameraManaging {
+	func removeSavedImage(at index: Int) {
+		savedImages.remove(at: index)
+	}
+	
+	func removeSavedImage(id: UUID) {
+		if let index = savedImages.firstIndex(where: { $0.id == id }) {
+			removeSavedImage(at: index)
+		}
+	}
+}
+
 #endif

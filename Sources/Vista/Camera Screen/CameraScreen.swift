@@ -10,16 +10,22 @@ import SwiftUI
 import AVFoundation
 import CrossPlatformKit
 
+public extension Color {
+	static let cameraTint = Color(hex: 0xe2ad08)
+}
+
 @available(iOS 17, *)
 public struct CameraScreen: View {
 	@State var manager: any CameraManaging
 	@State var isReviewingPhotos = false
 	@Namespace private var animationNamespace
 	let onImagesCaptured: (@MainActor ([UXImage]) -> Void)?
+	var tintColor = Color(hex: 0xe2ad08)
 
-	public init(manager: any CameraManaging = CameraManager.instance, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
+	public init(manager: any CameraManaging = CameraManager.instance, tintColor: Color = .cameraTint, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
 		_manager = State(initialValue: manager)
 		self.onImagesCaptured = onImagesCaptured
+		self.tintColor = tintColor
 	}
 
 	public var body: some View {
@@ -49,6 +55,7 @@ public struct CameraScreen: View {
 		.onDisappear {
 			manager.reset()
 		}
+		.tint(tintColor)
 	}
 }
 

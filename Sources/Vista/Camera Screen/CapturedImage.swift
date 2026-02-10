@@ -8,7 +8,7 @@
 import Foundation
 import CrossPlatformKit
 
-public struct CapturedImage: Identifiable {
+public struct CapturedImage: Identifiable, Equatable {
 	public let id = UUID()
 	
 	var image: UXImage
