@@ -38,8 +38,7 @@ public struct CameraView: View {
 			}
 		}
 		.onAppear {
-			manager.checkPermissions()
-			manager.startSession()
+			manager.checkPermissionsAndStart()
 		}
 		.onDisappear {
 			manager.stopSession()

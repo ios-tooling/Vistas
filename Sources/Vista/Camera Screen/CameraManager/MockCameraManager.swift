@@ -35,8 +35,9 @@ public final class MockCameraManager: CameraManaging {
 	
 	public init() { }
 
-	public func checkPermissions() {
+	public func checkPermissionsAndStart() {
 		checkPermissionsCalled = true
+		startSession()
 	}
 
 	public func startSession() {

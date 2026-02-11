@@ -31,18 +31,22 @@ import CrossPlatformKit
 		
 	}
 
-	public func checkPermissions() {
+	public func checkPermissionsAndStart() {
 		permissionStatus = AVCaptureDevice.authorizationStatus(for: .video)
 
 		if permissionStatus == .notDetermined {
 			AVCaptureDevice.requestAccess(for: .video) { granted in
 				Task { @MainActor in
 					self.permissionStatus = granted ? .authorized : .denied
-					if granted { self.configureSession() }
+					if granted {
+						self.configureSession()
+						self.startSession()
+					}
 				}
 			}
 		} else if permissionStatus == .authorized {
 			configureSession()
+			startSession()
 		}
 	}
 	

@@ -21,7 +21,7 @@ import Observation
 	var isSavingImage: Bool { get set }
 	var session: AVCaptureSession { get }
 	
-	func checkPermissions()
+	func checkPermissionsAndStart()
 	func startSession()
 	func stopSession()
 	func switchCamera()

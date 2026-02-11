@@ -21,11 +21,13 @@ public struct CameraScreen: View {
 	@Namespace private var animationNamespace
 	let onImagesCaptured: (@MainActor ([UXImage]) -> Void)?
 	var tintColor = Color(hex: 0xe2ad08)
+	let closeOption: CloseButtonOption?
 
-	public init(manager: any CameraManaging = CameraManager.instance, tintColor: Color = .cameraTint, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
+	public init(manager: any CameraManaging = CameraManager.instance, tintColor: Color = .cameraTint, closeOption: CloseButtonOption? = .xClose, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
 		_manager = State(initialValue: manager)
 		self.onImagesCaptured = onImagesCaptured
 		self.tintColor = tintColor
+		self.closeOption = closeOption
 	}
 
 	public var body: some View {
@@ -49,6 +51,11 @@ public struct CameraScreen: View {
 			CropView(manager: manager, image: manager.capturedImage, animationNamespace: animationNamespace)
 			if isReviewingPhotos {
 				ReviewPhotosView(manager: manager, isVisible: $isReviewingPhotos)
+			}
+			
+			if !isReviewingPhotos, manager.capturedImage == nil, let closeOption {
+				RoundSystemButton(closeOption)
+					.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: closeOption.alignment)
 			}
 		}
 		.toolbar(manager.capturedImage == nil ? .visible : .hidden)
