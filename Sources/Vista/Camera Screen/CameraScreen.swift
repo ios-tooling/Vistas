@@ -56,6 +56,7 @@ public struct CameraScreen: View {
 			if !isReviewingPhotos, manager.capturedImage == nil, let closeOption {
 				RoundSystemButton(closeOption)
 					.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: closeOption.alignment)
+					.padding()
 			}
 		}
 		.toolbar(manager.capturedImage == nil ? .visible : .hidden)
@@ -63,6 +64,7 @@ public struct CameraScreen: View {
 			manager.reset()
 		}
 		.tint(tintColor)
+		.toolbar(.hidden)
 	}
 }
 

@@ -18,7 +18,7 @@ struct ContentView: View {
 		NavigationStack {
 			List {
 				NavigationLink {
-					CameraScreen(manager: cameraManager) { image in print(image) }
+					CameraScreen(manager: cameraManager, closeOption: .navigationBack) { image in print(image) }
 				} label: {
 					Text("Custom Camera Screen")
 				}

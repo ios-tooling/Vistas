@@ -20,12 +20,12 @@ public struct CloseButtonOption: Equatable {
 }
 
 public extension CloseButtonOption {
-	static let navigationBack = CloseButtonOption(systemImageName: "chevron.back", alignment: .topLeading)
+	static let navigationBack = CloseButtonOption(systemImageName: "chevron.left", alignment: .topLeading)
 	static let sheetDismiss = CloseButtonOption(systemImageName: "chevron.down", alignment: .topTrailing)
 	static let xClose = CloseButtonOption(systemImageName: "xmark", alignment: .topTrailing)
 	
 	static func navigationBack(_ action: @escaping @MainActor () -> Void) -> CloseButtonOption {
-		CloseButtonOption(id: "navigationBack", action: action, systemImageName: "chevron.back", alignment: .topLeading)
+		CloseButtonOption(id: "navigationBack", action: action, systemImageName: "chevron.left", alignment: .topLeading)
 	}
 	static func sheetDismiss(_ action: @escaping @MainActor () -> Void) -> CloseButtonOption {
 		CloseButtonOption(id: "sheetDismiss", action: action, systemImageName: "chevron.down", alignment: .topTrailing)
