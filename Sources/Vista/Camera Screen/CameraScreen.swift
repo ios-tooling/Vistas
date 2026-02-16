@@ -34,16 +34,21 @@ public struct CameraScreen: View {
 		ZStack {
 			CameraView(manager: manager, onImagesCaptured: onImagesCaptured)
 
-			HStack {
-				let thumbnails = ThumbnailImages(manager: manager, isReviewingPhotos: $isReviewingPhotos, animationNamespace: animationNamespace)
+			VStack(spacing: 16) {
+				if manager.availableZoomFactors.count > 1 || manager.supportsMacro {
+					ZoomControl(manager: manager)
+				}
+				HStack {
+					let thumbnails = ThumbnailImages(manager: manager, isReviewingPhotos: $isReviewingPhotos, animationNamespace: animationNamespace)
 
-				Spacer()
-				thumbnails
-				Spacer()
-				TakePictureButton(manager: manager)
-				Spacer()
-				thumbnails.opacity(0)
-				Spacer()
+					Spacer()
+					thumbnails
+					Spacer()
+					TakePictureButton(manager: manager)
+					Spacer()
+					thumbnails.opacity(0)
+					Spacer()
+				}
 			}
 			.padding(.bottom)
 			.frame(maxHeight: .infinity, alignment: .bottom)

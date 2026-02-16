@@ -21,6 +21,10 @@ public final class MockCameraManager: CameraManaging {
 	public var capturedImage: UXImage?
 	public var savedImages: [CapturedImage] = []
 	public var isSavingImage = false
+	public var currentZoom: CGFloat = 1.0
+	public var availableZoomFactors: [CGFloat] = [0.5, 1, 2, 5]
+	public var isMacroEnabled = false
+	public var supportsMacro: Bool { true }
 	public let session = AVCaptureSession()
 
 	public var nextCapturedImage: UXImage?
@@ -79,6 +83,11 @@ public final class MockCameraManager: CameraManaging {
 		savedImages.append(.init(saved))
 		capturedImage = nil
 		isSavingImage = false
+	}
+
+	public func setZoom(_ factor: CGFloat) {
+		currentZoom = factor
+		isMacroEnabled = false
 	}
 }
 
