@@ -13,14 +13,14 @@ import CrossPlatformKit
 @available(iOS 17, *)
 public struct CameraView: View {
 	@State var manager: any CameraManaging
-	let onImagesCaptured: (@MainActor ([UXImage]) -> Void)?
-
-	public init(manager: any CameraManaging = CameraManager.instance, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
-		_manager = State(initialValue: manager)
-		self.onImagesCaptured = onImagesCaptured
+	
+	@MainActor public init(manager: (any CameraManaging)? = nil, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
+		_manager = State(initialValue: manager ?? CameraManager.instance)
+		_manager.wrappedValue.onImagesCaptured = onImagesCaptured
 	}
 
 	public var body: some View {
+		let _ = Self._printChanges()
 		Group {
 			switch manager.permissionStatus {
 			case .authorized:

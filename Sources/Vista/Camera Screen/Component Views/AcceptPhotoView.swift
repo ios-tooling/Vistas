@@ -1,5 +1,5 @@
 //
-//  CropView.swift
+//  AcceptPhotoView.swift
 //  Vistas
 //
 //  Created by Ben Gottlieb on 2/8/26.
@@ -10,10 +10,11 @@ import SwiftUI
 import CrossPlatformKit
 
 @available(iOS 17, *)
-struct CropView: View {
+struct AcceptPhotoView: View {
 	let manager: any CameraManaging
 	let image: UXImage?
 	var animationNamespace: Namespace.ID
+	@Environment(\.dismiss) var dismiss
 
 	var body: some View {
 		ZStack {
@@ -50,10 +51,17 @@ struct CropView: View {
 
 	private func keepImage() {
 		guard let image else { return }
-		withAnimation(.easeInOut(duration: 0.4)) {
-			manager.isSavingImage = true
-		} completion: {
-			manager.saveImage(nil)
+		
+		if manager.imageCountLimit == 1 {
+			manager.saveImage(image)
+			manager.finish()
+			dismiss()
+		} else {
+			withAnimation(.easeInOut(duration: 0.4)) {
+				manager.isSavingImage = true
+			} completion: {
+				manager.saveImage(image)
+			}
 		}
 	}
 }

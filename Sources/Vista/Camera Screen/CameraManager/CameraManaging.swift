@@ -12,7 +12,7 @@ import Observation
 
 @available(iOS 17, *)
 @MainActor public protocol CameraManaging: AnyObject, Observable {
-	static var instance: Self { get }
+	@MainActor static var instance: Self { get }
 	var isRunning: Bool { get set }
 	var cameraPosition: AVCaptureDevice.Position { get set }
 	var permissionStatus: AVAuthorizationStatus { get set }
@@ -24,6 +24,9 @@ import Observation
 	var availableZoomFactors: [CGFloat] { get set }
 	var isMacroEnabled: Bool { get set }
 	var supportsMacro: Bool { get }
+	var onImagesCaptured: (@MainActor ([UXImage]) -> Void)? { get set }
+	var imageCountLimit: Int? { get set }
+
 
 	func checkPermissionsAndStart()
 	func startSession()
@@ -56,6 +59,10 @@ public extension CameraManaging {
 			isMacroEnabled = false
 			setZoom(1.0)
 		}
+	}
+	
+	func finish() {
+		onImagesCaptured?(savedImages.map { $0.image })
 	}
 }
 

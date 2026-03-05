@@ -12,7 +12,7 @@ import CrossPlatformKit
 
 @available(iOS 17, *)
 @MainActor @Observable final public class CameraManager: CameraManaging {
-	public static let instance = CameraManager()
+	@MainActor public static let instance = CameraManager()
 
 	public var isRunning = false
 	public var cameraPosition: AVCaptureDevice.Position = .back
@@ -24,6 +24,8 @@ import CrossPlatformKit
 	public var availableZoomFactors: [CGFloat] = [1]
 	public var isMacroEnabled = false
 	public var supportsMacro: Bool { availableZoomFactors.contains(where: { $0 < 1.0 }) }
+	@ObservationIgnored public var onImagesCaptured: (@MainActor ([UXImage]) -> Void)?
+	public var imageCountLimit: Int?
 
 	public nonisolated(unsafe) let session = AVCaptureSession()
 	@ObservationIgnored nonisolated(unsafe) var videoDeviceInput: AVCaptureDeviceInput?
@@ -60,13 +62,15 @@ import CrossPlatformKit
 	}
 
 	public func startSession() {
-		guard permissionStatus == .authorized, !isRunning else { return }
-		sessionQueue.async { [weak self] in
-			self?.session.startRunning()
-			Task { @MainActor in
-				self?.isRunning = self?.session.isRunning ?? false
+		#if !targetEnvironment(simulator)
+			guard permissionStatus == .authorized, !isRunning else { return }
+			sessionQueue.async { [weak self] in
+				self?.session.startRunning()
+				Task { @MainActor in
+					self?.isRunning = self?.session.isRunning ?? false
+				}
 			}
-		}
+		#endif
 	}
 
 	public func stopSession() {

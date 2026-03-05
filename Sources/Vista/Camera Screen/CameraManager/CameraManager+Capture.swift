@@ -13,12 +13,14 @@ import SwiftUI
 @available(iOS 17, *)
 extension CameraManager {
 	public func capturePhoto() {
-		let settings = AVCapturePhotoSettings()
-		let processor = PhotoCaptureProcessor(manager: self)
-		captureProcessor = processor
-		sessionQueue.async { [weak self] in
-			self?.photoOutput.capturePhoto(with: settings, delegate: processor)
-		}
+		#if !targetEnvironment(simulator)
+			let settings = AVCapturePhotoSettings()
+			let processor = PhotoCaptureProcessor(manager: self)
+			captureProcessor = processor
+			sessionQueue.async { [weak self] in
+				self?.photoOutput.capturePhoto(with: settings, delegate: processor)
+			}
+		#endif
 	}
 	
 	public func saveImage(_ image: UXImage? = nil) {

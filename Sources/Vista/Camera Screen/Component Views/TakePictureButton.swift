@@ -26,6 +26,8 @@ struct TakePictureButton: View {
 				}
 				.frame(height: 80)
 		}
+		.disabled(manager.imageCountLimit == manager.savedImages.count)
+		.opacity(manager.imageCountLimit == manager.savedImages.count ? 0.5 : 1)
 	}
 }
 

@@ -14,8 +14,10 @@ struct ReviewPhotosView: View {
 	let manager: any CameraManaging
 	@Binding var isVisible: Bool
 	@State private var selectedID: UUID = UUID()
+	@Environment(\.dismiss) var dismiss
 	
 	var body: some View {
+		let _ = Self._printChanges()
 			if isVisible {
 				NavigationStack {
 					ZStack {
@@ -49,9 +51,21 @@ struct ReviewPhotosView: View {
 					}
 					.ignoresSafeArea()
 				}
-				.overlay(alignment: .topLeading) {
-					BackButton { isVisible = false }
+				.overlay(alignment: .top) {
+					HStack {
+						BackButton { isVisible = false }
+							.padding()
+						
+						Spacer()
+						
+						Button("Done") {
+							manager.finish()
+							dismiss()
+						}
+						.buttonStyle(.bordered)
+						.tint(.primary)
 						.padding()
+					}
 				}
 				.zIndex(10)
 				.onChange(of: manager.savedImages, initial: true) {

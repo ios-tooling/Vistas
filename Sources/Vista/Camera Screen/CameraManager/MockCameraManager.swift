@@ -13,7 +13,7 @@ import Observation
 @available(iOS 17, *)
 @MainActor @Observable
 public final class MockCameraManager: CameraManaging {
-	public static let instance = MockCameraManager()
+	@MainActor public static let instance = MockCameraManager()
 
 	public var isRunning = false
 	public var cameraPosition: AVCaptureDevice.Position = .back
@@ -26,6 +26,8 @@ public final class MockCameraManager: CameraManaging {
 	public var isMacroEnabled = false
 	public var supportsMacro: Bool { true }
 	public let session = AVCaptureSession()
+	public var onImagesCaptured: (@MainActor ([UXImage]) -> Void)?
+	public var imageCountLimit: Int?
 
 	public var nextCapturedImage: UXImage?
 	public var checkPermissionsCalled = false

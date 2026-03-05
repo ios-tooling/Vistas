@@ -19,20 +19,21 @@ public struct CameraScreen: View {
 	@State var manager: any CameraManaging
 	@State var isReviewingPhotos = false
 	@Namespace private var animationNamespace
-	let onImagesCaptured: (@MainActor ([UXImage]) -> Void)?
 	var tintColor = Color(hex: 0xe2ad08)
 	let closeOption: CloseButtonOption?
 
-	public init(manager: any CameraManaging = CameraManager.instance, tintColor: Color = .cameraTint, closeOption: CloseButtonOption? = .xClose, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
-		_manager = State(initialValue: manager)
-		self.onImagesCaptured = onImagesCaptured
+	@MainActor public init(manager: (any CameraManaging)? = nil, tintColor: Color = .cameraTint, closeOption: CloseButtonOption? = .xClose, imageCountLimit: Int? = 1, onImagesCaptured: (@MainActor ([UXImage]) -> Void)? = nil) {
+		_manager = State(initialValue: manager ?? CameraManager.instance)
+		_manager.wrappedValue.onImagesCaptured = onImagesCaptured
+		_manager.wrappedValue.imageCountLimit = imageCountLimit
 		self.tintColor = tintColor
 		self.closeOption = closeOption
 	}
 
 	public var body: some View {
+		let _ = Self._printChanges()
 		ZStack {
-			CameraView(manager: manager, onImagesCaptured: onImagesCaptured)
+			CameraView(manager: manager, onImagesCaptured: manager.onImagesCaptured)
 
 			VStack(spacing: 16) {
 				if manager.availableZoomFactors.count > 1 || manager.supportsMacro {
@@ -53,7 +54,7 @@ public struct CameraScreen: View {
 			.padding(.bottom)
 			.frame(maxHeight: .infinity, alignment: .bottom)
 
-			CropView(manager: manager, image: manager.capturedImage, animationNamespace: animationNamespace)
+			AcceptPhotoView(manager: manager, image: manager.capturedImage, animationNamespace: animationNamespace)
 			if isReviewingPhotos {
 				ReviewPhotosView(manager: manager, isVisible: $isReviewingPhotos)
 			}
