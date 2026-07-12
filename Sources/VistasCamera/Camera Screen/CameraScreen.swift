@@ -9,6 +9,7 @@
 import SwiftUI
 import AVFoundation
 import CrossPlatformKit
+import Vistas
 
 public extension Color {
 	static let cameraTint = Color(hex: 0xe2ad08)

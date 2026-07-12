@@ -9,10 +9,10 @@ import SwiftUI
 
 
 public struct CloseButtonOption: Equatable {
-	var id = UUID().uuidString
-	var action: (@MainActor () -> Void)? = nil
-	let systemImageName: String
-	let alignment: Alignment
+	public var id = UUID().uuidString
+	public var action: (@MainActor () -> Void)? = nil
+	public let systemImageName: String
+	public let alignment: Alignment
 	
 	public static func == (lhs: CloseButtonOption, rhs: CloseButtonOption) -> Bool {
 		lhs.id == rhs.id
